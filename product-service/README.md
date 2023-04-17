@@ -1,32 +1,33 @@
 # Cat Shop
 
-# Task 3
-# Service is done with FE
+# Task 4
+# Integration with NoSQL Database
 
 # Links to Product Service API
+GET:
 https://afgfgse3n7.execute-api.us-east-1.amazonaws.com/dev/products
-https://afgfgse3n7.execute-api.us-east-1.amazonaws.com/dev/products/7567ec4b-b10c-48c5-9445-fc73c48a80a2
+https://afgfgse3n7.execute-api.us-east-1.amazonaws.com/dev/products/{id}
+POST:
+https://afgfgse3n7.execute-api.us-east-1.amazonaws.com/dev/products
 
 # FE PR link
-https://github.com/anastasiya-antonenko/shop-angular-cloudfront/pull/2
+https://github.com/anastasiya-antonenko/shop-angular-cloudfront
 
 # Swagger
-https://agills86v9.execute-api.us-east-1.amazonaws.com/swagger
+https://38qdz564qk.execute-api.us-east-1.amazonaws.com/swagger
 
 # Deploy 
 https://d1gjzqq39e70nl.cloudfront.net/
 
-# All tasks were completed:
+# Tasks were completed:
 Evaluation criteria :
-* Product Service Serverless config contains configuration for 2 lambda functions, API is not working at all, but YAML configuration is correct
-* The getProductsList OR getProductsById lambda function returns a correct response (POINT1)
-* The getProductsById AND getProductsList lambda functions return a correct response code (POINT2)
-* Your own Frontend application is integrated with Product Service (/products API) and products from Product Service are represented on Frontend. AND POINT1 and POINT2 are done.
+* Task 4.1 is implemented
+* Task 4.2 is implemented lambda links are provided and returns data
+* Task 4.3 is implemented lambda links are provided and products is stored in DB
+* Your own Frontend application is integrated with Product Service (/products API) and products from Product Service are represented on Frontend. 
+Link to a working Frontend application is provided for cross-check reviewer.
 Additional (optional) tasks
-* +5 - Async/await is used in lambda functions
-* +5 - ES6 modules are used for Product Service implementation
-* +4 - Custom Webpack/ESBuild/etc is manually configured for Product Service. Not applicable for preconfigured/built-in bundlers that come with templates, plugins, etc.
-* +4 - SWAGGER documentation is created for Product Service
-* +4 - Lambda handlers are covered by basic UNIT tests (NO infrastructure logic is needed to be covered)
-* +4 - Lambda handlers (getProductsList, getProductsById) code is written not in 1 single module (file) and separated in codebase.
-* +4 - Main error scenarios are handled by API ("Product not found" error).
+* +6 - POST /products lambda functions returns error 400 status code if product data is invalid
+* +6 - All lambdas return error 500 status code on any error (DB connection, any unhandled error in code)
+* +6 - All lambdas do console.log for each incoming requests and their arguments
+* +6 - Transaction based creation of product

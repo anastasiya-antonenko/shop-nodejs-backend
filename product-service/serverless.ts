@@ -2,6 +2,7 @@ import type { AWS } from '@serverless/typescript';
 import getProductsList from '@functions/get-products-list';
 import getProductById from '@functions/get-product-by-id';
 import createProduct from '@functions/create-product';
+import catalogBatchProcess from '@functions/catalog-batch-process';
 
 const serverlessConfiguration: AWS = {
     service: 'product-service',
@@ -36,11 +37,23 @@ const serverlessConfiguration: AWS = {
                     'dynamodb:DeleteItem',
                 ],
                 Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/*'
-            }
+            },
+            {
+                Effect: 'Allow',
+                Action: [
+                    'sqs:*'
+                ],
+                Resource: 'arn:aws:sqs:us-east-1:274922047683:catalogItemsQueue'
+            },
+            {
+                Effect: 'Allow',
+                Action: ['sns:*'],
+                Resource: 'arn:aws:sns:us-east-1:274922047683:createProductTopic',
+            },
         ]
     },
     // import the function via paths
-    functions: { getProductsList, getProductById, createProduct },
+    functions: { getProductsList, getProductById, createProduct, catalogBatchProcess },
     package: { individually: true },
     custom: {
         esbuild: {
@@ -59,11 +72,65 @@ const serverlessConfiguration: AWS = {
         },
         autoswagger: {
           generateSwaggerOnDeploy: true,
-          host: 'afgfgse3n7.execute-api.us-east-1.amazonaws.com/dev',
+          host: '6h7c8p3orb.execute-api.us-east-1.amazonaws.com/dev',
         }
     },
     resources: {
         Resources: {
+            catalogItemsQueue: {
+                Type: 'AWS::SQS::Queue',
+                Properties: {
+                    QueueName: 'catalogItemsQueue'
+                }
+            },
+            // createProductTopic: {
+            //     Type: 'AWS::SNS::Topic',
+            //     Properties: {
+            //         TopicName: 'createProductTopic',
+            //         Subscription: [
+            //             {
+            //                 Protocol: 'email',
+            //                 Endpoint: 'nastyaantonenko99@mail.ru'
+            //             }
+            //         ],
+            //         filterPolicyScope: 'Message',
+            //         filterPolicy: {
+            //             count: [1]
+            //         }
+            //     }
+            // },
+            createProductTopic: {
+                Type: 'AWS::SNS::Topic',
+                Properties: {
+                    TopicName: 'createProductTopic'
+                }
+            },
+            SNSSubscription: {
+                Type: 'AWS::SNS::Subscription',
+                Properties: {
+                    Protocol: 'email',
+                    Endpoint: 'nastyaantonenko99@mail.ru',
+                    TopicArn: {
+                        Ref: 'createProductTopic'
+                    },
+                    FilterPolicy: {
+                        messagePrice: ['Default']
+                    }
+                }
+            },
+            SNSMultSubscription: {
+                Type: 'AWS::SNS::Subscription',
+                Properties: {
+                    Protocol: 'email',
+                    Endpoint: 'nastyaantonenko99999@gmail.com',
+                    TopicArn: {
+                        Ref: 'createProductTopic'
+                    },
+                    FilterPolicy: {
+                        messagePrice: ['Default', 'Sale']
+                    }
+                }
+            },
             products: {
                 Type: 'AWS::DynamoDB::Table',
                 Properties: {
@@ -89,8 +156,8 @@ const serverlessConfiguration: AWS = {
                         }
                     ],
                     ProvisionedThroughput: {
-                        ReadCapacityUnits: 10,
-                        WriteCapacityUnits: 10
+                        ReadCapacityUnits: 1,
+                        WriteCapacityUnits: 1
                     }
                 }
             },
@@ -119,8 +186,8 @@ const serverlessConfiguration: AWS = {
                         }
                     ],
                     ProvisionedThroughput: {
-                        ReadCapacityUnits: 10,
-                        WriteCapacityUnits: 10
+                        ReadCapacityUnits: 1,
+                        WriteCapacityUnits: 1
                     }
                 }
             }

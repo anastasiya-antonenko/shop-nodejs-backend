@@ -36,7 +36,14 @@ const serverlessConfiguration: AWS = {
           's3:*',
         ],
         Resource: 'arn:aws:s3:::${self:custom.bucketName}/*',
-      }
+      },
+      {
+        Effect: 'Allow',
+        Action: [
+            'sqs:*'
+        ],
+        Resource: 'arn:aws:sqs:us-east-1:274922047683:catalogItemsQueue'
+      },
     ]
   },
   // import the function via paths

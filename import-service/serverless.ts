@@ -10,6 +10,13 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
+      httpApi: {
+          cors: {
+              allowedOrigins: ["*"],
+              allowedMethods: ["*"],
+              allowedHeaders: ["*"],
+          }
+      },
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -63,14 +70,24 @@ const serverlessConfiguration: AWS = {
       define: { 'require.resolve': undefined },
       platform: 'node',
       concurrency: 10,
-    },
+    }
   },
   resources: {
       Resources: {
         ImportFileBucket: {
             Type: 'AWS::S3::Bucket',
             Properties: {
-                BucketName: '${self:custom.bucketName}'
+                BucketName: '${self:custom.bucketName}',
+                CorsConfiguration: {
+                    CorsRules: [
+                        {
+                            AllowedOrigins: ['*'],
+                            AllowedHeaders: ['*'],
+                            AllowedMethods: ['PUT'],
+                            MaxAge: 3000
+                        }
+                    ]
+                }
             }
         }
       }

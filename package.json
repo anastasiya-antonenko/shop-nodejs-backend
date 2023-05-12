@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "service:create": "serverless create -t aws-nodejs-typescript -p"
+  }
+}

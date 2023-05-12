@@ -6,6 +6,8 @@ const s3 = new AWS.S3({
     signatureVersion: 'v4'
 });
 
+const sqs = new AWS.SQS();
+
 const importFileParser = async (event) => {
   const bucket = process.env.BUCKET_NAME;
   const fileName = event.Records[0].s3.object.key;
@@ -31,7 +33,19 @@ const importFileParser = async (event) => {
           .on('end', async  () => {
               await s3.copyObject(paramsForCoping).promise();
               await s3.deleteObject(params).promise();
-              console.log(chunks, 'chunks');
+              try {
+                  console.log(chunks, 'chunks');
+
+                  for (const chunk of chunks) {
+                      await sqs.sendMessage({
+                          QueueUrl: 'https://sqs.us-east-1.amazonaws.com/274922047683/catalogItemsQueue',
+                          MessageBody: JSON.stringify(chunk),
+                      }).promise()
+                  }
+              } catch(error) {
+                  console.log(JSON.stringify(error))
+              }
+
               resolve(chunks);
           });
   });

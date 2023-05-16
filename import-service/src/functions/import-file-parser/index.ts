@@ -7,12 +7,18 @@ export default {
       s3: {
           bucket: '${self:custom.bucketName}',
           event: 's3:ObjectCreated:*',
+          cors: true,
           rules: [
             {
               prefix: 'uploaded/'
             }
           ],
-          existing: true
+          existing: true,
+          response: {
+              headers: {
+                  'Access-Control-Allow-Origin':  '*'
+              }
+          }
       }
     },
   ],

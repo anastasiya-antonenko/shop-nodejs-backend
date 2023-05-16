@@ -1,7 +1,7 @@
 # Cat Shop
 
-# Task 6
-# SQS & SNS, Async Microservices Communication
+# Task 7
+# Authorization
 
 # Links to Product Service API
 GET:
@@ -21,6 +21,12 @@ https://d2eqrbxs5gge55.cloudfront.net/
 
 # Tasks were completed:
   Evaluation criteria :
-* 
-  Additional (optional) tasks
-* 
+* authorization-service is added to the repo, has correct basicAuthorizer lambda and correct serverless.yaml file
+* Import Service serverless.yaml file has authorizer configuration for the importProductsFile lambda. 
+    Request to the importProductsFile lambda should work only with correct authorization_token being decoded and checked by
+    basicAuthorizer lambda. Response should be in 403 HTTP status if access is denied for this user (invalid authorization_token) 
+    and in 401 HTTP status if Authorization header is not provided.
+* Client application is updated to send "Authorization: Basic authorization_token" header on import. 
+    Client should get authorization_token value from browser localStorage
+  Additional (optional) tasks:
+* +30 - Client application should display alerts for the responses in 401 and 403 HTTP statuses.
